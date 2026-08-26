@@ -1,0 +1,38 @@
+[
+  {
+    "image": "assets/images/gallery/maldives-palms.jpeg",
+    "location": "Maldives",
+    "caption": "Where the palms meet the sea",
+    "alt": "Palm trees leaning over the sea at sunset"
+  },
+  {
+    "image": "assets/images/gallery/alexandria-stone-window.jpeg",
+    "location": "Alexandria",
+    "caption": "A window to the Mediterranean",
+    "alt": "Blue sea framed by a narrow opening in an old stone fort"
+  },
+  {
+    "image": "assets/images/gallery/camel-by-the-sea.jpeg",
+    "location": "Sinai",
+    "caption": "An unexpected hello",
+    "alt": "Sara standing near a camel beside a mountain-lined coast"
+  },
+  {
+    "image": "assets/images/gallery/turquoise-shore.jpeg",
+    "location": "Egypt",
+    "caption": "Salt, sun & turquoise",
+    "alt": "Clear turquoise water along a salt-lined shore"
+  },
+  {
+    "image": "assets/images/gallery/dahab-mountain-light.jpeg",
+    "location": "Dahab",
+    "caption": "Light over the mountains",
+    "alt": "Sunbeams breaking through clouds above a mountain range"
+  },
+  {
+    "image": "assets/images/gallery/alexandria-mediterranean.jpeg",
+    "location": "Alexandria",
+    "caption": "Sea air & old stone",
+    "alt": "Bright blue Mediterranean water seen from a historic fort in Alexandria"
+  }
+]

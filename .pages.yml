@@ -1,0 +1,56 @@
+media:
+  - name: gallery_images
+    label: Gallery Photos
+    input: assets/images/gallery
+    output: assets/images/gallery
+    categories: [image]
+    extensions: [jpg, jpeg, png, webp, avif]
+    rename: safe
+    commit:
+      templates:
+        create: "Gallery: upload {filename}"
+        update: "Gallery: update {filename}"
+        delete: "Gallery: remove {filename}"
+        rename: "Gallery: rename {oldFilename} to {newFilename}"
+
+content:
+  - name: gallery
+    label: Photo Gallery
+    type: file
+    path: content/gallery.json
+    format: json
+    list: true
+    fields:
+      - name: image
+        label: Photo
+        type: image
+        required: true
+        description: Choose an existing gallery photo or upload a new one.
+        options:
+          media: gallery_images
+          categories: [image]
+          rename: safe
+      - name: location
+        label: Location
+        type: string
+        required: true
+        description: The small place name shown above the caption.
+      - name: caption
+        label: Caption
+        type: string
+        required: true
+        description: The main caption shown over the photo.
+      - name: alt
+        label: Image description
+        type: text
+        required: true
+        description: Briefly describe what is visible for visitors using screen readers.
+    commit:
+      identity: user
+      templates:
+        update: "Gallery: update photos and captions"
+
+settings:
+  hide: true
+  commit:
+    identity: user
