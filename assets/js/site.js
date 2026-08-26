@@ -10,6 +10,86 @@
   const latestFrame = latestPlayer?.querySelector("iframe");
   const latestFallback = latestPlayer?.querySelector(".latest-player-fallback");
   const gallery = document.querySelector("[data-gallery]");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let revealObserver;
+
+  function registerRevealElements(elements, variant, stagger) {
+    if (!revealObserver) return;
+
+    Array.from(elements).forEach(function (element, index) {
+      element.classList.add("reveal-item");
+      if (variant) element.classList.add(variant);
+      element.style.setProperty("--reveal-delay", `${Math.min(index, 5) * stagger}ms`);
+      revealObserver.observe(element);
+    });
+  }
+
+  function setupScrollMotion() {
+    if (reduceMotion || !("IntersectionObserver" in window)) return;
+
+    document.documentElement.classList.add("motion-ready");
+    revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        revealObserver.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px 0px -9%", threshold: 0.12 });
+
+    const revealGroups = [
+      [".hero-copy", "reveal-left"],
+      [".hero-visual", "reveal-scale"],
+      [".video-section .section-heading", ""],
+      [".film-poster", "reveal-left"],
+      [".film-copy", "reveal-right"],
+      [".auto-latest-copy", "reveal-left"],
+      [".latest-player", "reveal-right"],
+      [".journal-heading", ""],
+      [".about-photo-wrap", "reveal-left"],
+      [".about-copy", "reveal-right"],
+      [".closing-content", "reveal-scale"],
+      [".footer-main > *", ""]
+    ];
+
+    requestAnimationFrame(function () {
+      revealGroups.forEach(function (group) {
+        registerRevealElements(document.querySelectorAll(group[0]), group[1], 80);
+      });
+      registerRevealElements(document.querySelectorAll(".story-card"), "reveal-scale", 65);
+    });
+  }
+
+  function setupParallax() {
+    if (reduceMotion) return;
+
+    const heroImage = document.querySelector(".hero-photo-main img");
+    const closingImage = document.querySelector(".closing-bg");
+    let ticking = false;
+
+    function updateParallax() {
+      const heroShift = Math.min(window.scrollY * 0.035, 24);
+      heroImage?.style.setProperty("--parallax-y", `${heroShift}px`);
+
+      if (closingImage) {
+        const rect = closingImage.parentElement.getBoundingClientRect();
+        const distance = (window.innerHeight / 2) - (rect.top + rect.height / 2);
+        const closingShift = Math.max(-24, Math.min(24, distance * 0.035));
+        closingImage.style.setProperty("--parallax-y", `${closingShift}px`);
+      }
+
+      ticking = false;
+    }
+
+    function requestParallaxFrame() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(updateParallax);
+    }
+
+    window.addEventListener("scroll", requestParallaxFrame, { passive: true });
+    window.addEventListener("resize", requestParallaxFrame);
+    updateParallax();
+  }
 
   // Pages CMS edits this data file. Keep the gallery already present in the
   // HTML as a graceful fallback if the file cannot be loaded.
@@ -49,12 +129,17 @@
         cards.append(figure);
       });
 
-      if (cards.childNodes.length > 0) gallery.replaceChildren(cards);
+      if (cards.childNodes.length > 0) {
+        gallery.replaceChildren(cards);
+        registerRevealElements(gallery.querySelectorAll(".story-card"), "reveal-scale", 65);
+      }
     } catch (error) {
       console.warn("The editable gallery could not be loaded; using the built-in gallery.", error);
     }
   }
 
+  setupScrollMotion();
+  setupParallax();
   loadGallery();
 
   // YouTube rejects embeds opened directly from file:// because there is no
